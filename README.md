@@ -23,9 +23,9 @@
 
 
 note:
-To change the batch insert method, modify the insert function in class service.BatchLabelService
+To change the batch insert method, modify the insert function in class service.BatchLabelService in line 97：
 
-This is batch insert method:
+This is batch insert by mybatis:
 
 ---  //batchLabelMapper.insertBatch(tableName, labels);
 
