@@ -2,6 +2,9 @@ package com.single.batch.service;
 
 import com.single.batch.entity.Label;
 import com.single.batch.mapper.BatchLabelMapper;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,29 @@ public class BatchLabelService {
     @Autowired
     private BatchLabelMapper batchLabelMapper;
 
+    @Autowired
+    private SqlSessionTemplate sqlSessionTemplate;
+
+    public void batchInsert(String tableName, List<Label> labels){
+        SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+        BatchLabelMapper batchTableDao = session.getMapper(BatchLabelMapper.class);
+        try {
+            int i=0;
+            for (Label label : labels) {
+                batchTableDao.insert(tableName, label);
+                if (i % 1000 == 0 || i == labels.size()-1) {
+                    session.flushStatements();
+                    session.clearCache();
+                }
+                i++;
+            }
+            session.commit();
+        }catch (Exception e) {
+            Log.warn("submit error : "+e.getMessage());
+        } finally{
+            session.close();
+        }
+    }
 
     public void startGenerate(int number, int index) {
         Log.info("Start Generate Number:"+number +", Index:"+index);
@@ -68,7 +94,8 @@ public class BatchLabelService {
             labels.add(label);
             if (i % INSERT_BATCH == 0 && i > 10) {
                 Log.warn("StartAt:"+df.format(new Date(System.currentTimeMillis())) + " inserting: " + i +"/"+number);
-                batchLabelMapper.insertBatch(tableName, labels);
+                //batchLabelMapper.insertBatch(tableName, labels);
+                batchInsert(tableName, labels);
                 labels.clear();
             }
         }
