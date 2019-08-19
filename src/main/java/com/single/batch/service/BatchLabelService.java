@@ -106,10 +106,8 @@ public class BatchLabelService {
 
     public String getTableName(int index) {
         String tableName = "label_"+index;
-        int num = batchLabelMapper.existTable(tableName);
-        if (num == 0) {
-            batchLabelMapper.createNewTable(tableName);
-        }
+        batchLabelMapper.dropTable(tableName);
+        batchLabelMapper.createNewTable(tableName);
         return tableName;
     }
 
