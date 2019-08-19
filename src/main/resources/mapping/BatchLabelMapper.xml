@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.single.batch.mapper.BatchLabelMapper">
+
+    <resultMap id="BatchLabelResultMap" type="com.single.batch.entity.Label">
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="parent" jdbcType="BIGINT" property="id"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="customer_id" jdbcType="INTEGER" property="customerId"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+        <result column="reseller_id" jdbcType="INTEGER" property="resellerId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="batch" jdbcType="INTEGER" property="batch"/>
+        <result column="query_times" jdbcType="INTEGER" property="queryTimes"/>
+        <result column="first_time" jdbcType="DATE" property="firstTime"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="DATE" property="updateTime"/>
+    </resultMap>
+
+    <select id="getById" resultType="com.single.batch.entity.Label">
+        select * from ${tableName} where id = #{id}
+    </select>
+
+    <select id="existTable" parameterType="String" resultType="Integer">
+        select count(*)
+        from information_schema.TABLES
+        where LCASE(table_name)=#{tableName}
+    </select>
+
+    <update id="dropTable">
+        DROP TABLE IF EXISTS ${tableName}
+    </update>
+
+    <update id="createNewTable" parameterType="String">
+        CREATE TABLE ${tableName} (
+          id bigint(20) NOT NULL,
+          parent bigint(20),
+          code varchar (32),
+          status int(11) NOT NULL,
+          type int(11) NOT NULL,
+          customer_id int(11),
+          operator_id int(11),
+          reseller_id int(11),
+          user_id int(11),
+          product_id int(11),
+          batch int(11),
+          query_times int(11),
+          first_time datetime(0),
+          create_time datetime(0) DEFAULT NULL,
+          update_time datetime(0) DEFAULT NULL,
+          PRIMARY KEY (id))
+    </update>
+
+    <insert id="insert" parameterType="com.single.batch.entity.Label">
+        insert into ${tableName}
+        (id, parent, code, status, type, customer_id, operator_id, reseller_id, user_id, product_id, batch, query_times, first_time, create_time, update_time)
+        values
+        (#{label.id},
+        #{label.parent},
+        #{label.code},
+        #{label.status},
+        #{label.type},
+        #{label.customerId},
+        #{label.operatorId},
+        #{label.resellerId},
+        #{label.userId},
+        #{label.productId},
+        #{label.batch},
+        #{label.queryTimes},
+        #{label.createTime},
+        #{label.firstTime},
+        #{label.updateTime})
+    </insert>
+
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into ${tableName}
+        (id, parent, code, status, type, customer_id, operator_id, reseller_id, user_id, product_id, batch, query_times,
+        first_time, create_time, update_time)
+        values
+        <foreach collection="labels" item="label" index="index" separator=",">
+            (#{label.id},
+            #{label.parent},
+            #{label.code},
+            #{label.status},
+            #{label.type},
+            #{label.customerId},
+            #{label.operatorId},
+            #{label.resellerId},
+            #{label.userId},
+            #{label.productId},
+            #{label.batch},
+            #{label.queryTimes},
+            #{label.firstTime},
+            #{label.createTime},
+            #{label.updateTime})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = VALUES(id)
+    </insert>
+
+</mapper>
