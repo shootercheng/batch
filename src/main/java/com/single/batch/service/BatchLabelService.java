@@ -27,7 +27,7 @@ public class BatchLabelService {
 
     private static final Logger Log = LoggerFactory.getLogger(BatchLabelService.class);
 
-    public final static int INSERT_BATCH = 100000;
+    public final static int INSERT_BATCH = 1000;
 
     @Autowired
     private BatchLabelMapper batchLabelMapper;
