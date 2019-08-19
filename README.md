@@ -19,3 +19,17 @@
       
       
 4. run the same jar in linux server (centos7).
+
+
+
+note:
+To change the batch insert method, modify the insert function in class service.BatchLabelService
+
+This is batch insert method:
+
+---  //batchLabelMapper.insertBatch(tableName, labels);
+
+This is insert by ExecutorType.BATCH:
+
+--- batchInsert(tableName, labels);
+
