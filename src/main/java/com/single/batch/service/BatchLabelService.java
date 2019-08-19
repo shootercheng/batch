@@ -27,34 +27,13 @@ public class BatchLabelService {
 
     private static final Logger Log = LoggerFactory.getLogger(BatchLabelService.class);
 
-    public final static int INSERT_BATCH = 1000;
+    public final static int INSERT_BATCH = 7000;
 
     @Autowired
     private BatchLabelMapper batchLabelMapper;
 
     @Autowired
     private SqlSessionTemplate sqlSessionTemplate;
-
-    public void batchInsert(String tableName, List<Label> labels){
-        SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
-        BatchLabelMapper batchTableDao = session.getMapper(BatchLabelMapper.class);
-        try {
-            int i=0;
-            for (Label label : labels) {
-                batchTableDao.insert(tableName, label);
-                if (i % 1000 == 0 || i == labels.size()-1) {
-                    session.flushStatements();
-                    session.clearCache();
-                }
-                i++;
-            }
-            session.commit();
-        }catch (Exception e) {
-            Log.warn("submit error : "+e.getMessage());
-        } finally{
-            session.close();
-        }
-    }
 
     public void startGenerate(int number, int index) {
         Log.info("Start Generate Number:"+number +", Index:"+index);
@@ -76,28 +55,33 @@ public class BatchLabelService {
         Long stepNow = System.currentTimeMillis();
         stepLast = stepNow;
         Label label;
-
-        for (int i = 0; i < ids.length; i++) {
-            label = new Label();
-            label.setId(ids[i]);
-            label.setType(0);
-            label.setStatus(1);
-            label.setCode("" + ids[i]);
-            label.setCustomerId(1L);
-            label.setOperatorId(1L);
-            label.setResellerId(1L);
-            label.setProductId(1L);
-            label.setBatch(index);
-            label.setParent(1L);
-            label.setCreateTime(new Date(System.currentTimeMillis()));
-            label.setUpdateTime(new Date(System.currentTimeMillis()));
-            labels.add(label);
-            if (i % INSERT_BATCH == 0 && i > 10) {
-                Log.warn("StartAt:"+df.format(new Date(System.currentTimeMillis())) + " inserting: " + i +"/"+number);
-                //batchLabelMapper.insertBatch(tableName, labels);
-                batchInsert(tableName, labels);
-                labels.clear();
+        
+        try (SqlSession session = sqlSessionTemplate.getSqlSessionFactory()
+                .openSession(ExecutorType.BATCH, false)) {
+            BatchLabelMapper batchTableDao = session
+                    .getMapper(BatchLabelMapper.class);
+            for (int i = 0; i < ids.length; i++) {
+                label = new Label();
+                label.setId(ids[i]);
+                label.setType(0);
+                label.setStatus(1);
+                label.setCode("" + ids[i]);
+                label.setCustomerId(1L);
+                label.setOperatorId(1L);
+                label.setResellerId(1L);
+                label.setProductId(1L);
+                label.setBatch(index);
+                label.setParent(1L);
+                label.setCreateTime(new Date(System.currentTimeMillis()));
+                label.setUpdateTime(new Date(System.currentTimeMillis()));
+                batchTableDao.insert(tableName, label);
+                if (i % INSERT_BATCH == 0 || i == labels.size() - 1) {
+                    Log.warn("StartAt:"+df.format(new Date(System.currentTimeMillis())) + " inserting: " + i +"/"+number);
+                    session.flushStatements();
+                    session.clearCache();
+                }
             }
+            session.commit();
         }
         stepNow = System.currentTimeMillis();
         Log.warn("TotalUsedTime:" + (stepNow - startTime) + "ms");
