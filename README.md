@@ -37,7 +37,9 @@ This is insert by ExecutorType.BATCH:
 
 ======================
 
-To change the batch size in class service.BatchLabelService :
+If you submit a large number of rows, the program will split into small batch,
+
+To change each batch size in class service.BatchLabelService :
 
 public final static int INSERT_BATCH = 100000;
 
