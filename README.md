@@ -22,7 +22,9 @@
 
 
 
-note:
+
+
+Note:
 To change the batch insert method, modify the insert function in class service.BatchLabelService in line 97：
 
 This is batch insert by mybatis:
