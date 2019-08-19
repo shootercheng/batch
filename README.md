@@ -21,7 +21,7 @@
 4. run the same jar in linux server (centos7).
 
 
-
+======================
 
 
 Note:
@@ -34,4 +34,10 @@ This is batch insert by mybatis:
 This is insert by ExecutorType.BATCH:
 
 --- batchInsert(tableName, labels);
+
+======================
+
+To change the batch size in class service.BatchLabelService :
+
+public final static int INSERT_BATCH = 100000;
 
