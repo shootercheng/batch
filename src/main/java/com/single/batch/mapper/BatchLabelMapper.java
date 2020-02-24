@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author:0xOO
@@ -27,4 +28,8 @@ public interface BatchLabelMapper {
     void insertBatch(@Param("tableName")String tableName, List<Label> labels);
 
     int truncateTable(@Param("tableName")String tableName);
+
+    List<String> selectPage(Map<String, Object> map);
+
+    int countTbSum(Map<String, Object> map);
 }

@@ -106,4 +106,30 @@
         id = VALUES(id)
     </insert>
 
+    <select id = "countTbSum" resultType="java.lang.Integer">
+        select count(1) from ${tableName}
+    </select>
+
+    <select id = "selectPage" resultType="java.lang.String">
+        select concat_ws(',',
+            id,
+            ifnull(parent,''),
+            ifnull(code,''),
+            ifnull(status,''),
+            ifnull(type,''),
+            ifnull(customer_id,''),
+            ifnull(operator_id,''),
+            ifnull(reseller_id,''),
+            ifnull(user_id,''),
+            ifnull(product_id,''),
+            ifnull(batch,''),
+            ifnull(query_times,''),
+            ifnull(first_time,''),
+            ifnull(create_time,''),
+            ifnull(update_time,'')
+        ) from ${tableName}
+        <if test="startIndex != null and pageSize != null">
+            limit #{startIndex},#{pageSize}
+        </if>
+    </select>
 </mapper>
