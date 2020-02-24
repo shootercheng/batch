@@ -71,18 +71,17 @@ public class BatchLabelService {
         Long startTime = stepLast;
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String tableName = getTableName(index);
-        List<Label> labels = new ArrayList<>();
-        long[] ids = ThreadLocalRandom.current().longs(1000000000L, 10000000000L).distinct().limit(number).toArray();
+        List<Label> labels = new ArrayList<>(INSERT_BATCH);
+        long[] ids = ThreadLocalRandom.current().longs(1000000000L, 10000000000L).distinct().limit(number).sorted().toArray();
         Long stepNow = System.currentTimeMillis();
         stepLast = stepNow;
         Label label;
-
         for (int i = 0; i < ids.length; i++) {
             label = new Label();
             label.setId(ids[i]);
             label.setType(0);
             label.setStatus(1);
-            label.setCode("" + ids[i]);
+            label.setCode("" + i);
             label.setCustomerId(1L);
             label.setOperatorId(1L);
             label.setResellerId(1L);
@@ -92,10 +91,10 @@ public class BatchLabelService {
             label.setCreateTime(new Date(System.currentTimeMillis()));
             label.setUpdateTime(new Date(System.currentTimeMillis()));
             labels.add(label);
-            if (i % INSERT_BATCH == 0 && i > 10) {
-                Log.warn("StartAt:"+df.format(new Date(System.currentTimeMillis())) + " inserting: " + i +"/"+number);
-                //batchLabelMapper.insertBatch(tableName, labels);
-                batchInsert(tableName, labels);
+            if (labels.size() == INSERT_BATCH ) {
+                Log.warn("StartAt:"+df.format(new Date(System.currentTimeMillis())) + " inserting: " + (i+1) +"/"+number);
+                batchLabelMapper.insertBatch(tableName, labels);
+//                batchInsert(tableName, labels);
                 labels.clear();
             }
         }
@@ -109,6 +108,8 @@ public class BatchLabelService {
         int num = batchLabelMapper.existTable(tableName);
         if (num == 0) {
             batchLabelMapper.createNewTable(tableName);
+        } else {
+            batchLabelMapper.truncateTable(tableName);
         }
         return tableName;
     }

@@ -54,6 +54,10 @@
           PRIMARY KEY (id))
     </update>
 
+    <delete id="truncateTable" >
+        TRUNCATE TABLE ${tableName}
+    </delete>
+
     <insert id="insert" parameterType="com.single.batch.entity.Label">
         insert into ${tableName}
         (id, parent, code, status, type, customer_id, operator_id, reseller_id, user_id, product_id, batch, query_times, first_time, create_time, update_time)

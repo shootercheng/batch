@@ -25,4 +25,6 @@ public interface BatchLabelMapper {
     int insert(@Param("tableName")String tableName,@Param("label") Label label);
 
     void insertBatch(@Param("tableName")String tableName, List<Label> labels);
+
+    int truncateTable(@Param("tableName")String tableName);
 }
