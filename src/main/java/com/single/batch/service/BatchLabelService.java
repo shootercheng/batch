@@ -98,6 +98,9 @@ public class BatchLabelService {
                 labels.clear();
             }
         }
+        if (labels.size() > 0) {
+            batchLabelMapper.insertBatch(tableName, labels);
+        }
         stepNow = System.currentTimeMillis();
         Log.warn("TotalUsedTime:" + (stepNow - startTime) + "ms");
 
