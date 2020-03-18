@@ -30,7 +30,7 @@
             <transactionManager type="JDBC">
                 <property name="" value=""/>
             </transactionManager>
-            <dataSource type="UNPOOLED">
+            <dataSource type="POOLED">
                 <property name="driver" value="${driverClassName}"/>
                 <property name="url" value="${jdbcUrl}"/>
                 <property name="username" value="${username}"/>

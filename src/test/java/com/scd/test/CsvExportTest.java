@@ -1,14 +1,13 @@
 package com.scd.test;
 
-import com.single.batch.export.csv.Constants;
-import com.single.batch.export.csv.DbQueryExport;
-import com.single.batch.export.csv.ExportParam;
+import com.github.shootercheng.export.Constants;
+import com.github.shootercheng.export.CsvQueryExport;
+import com.github.shootercheng.param.ExportParam;
 import com.single.batch.mapper.BatchLabelMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,11 +69,13 @@ public class CsvExportTest {
             exportParam.setPageSize(10000);
             exportParam.setRecordSeparator(Constants.CRLF);
             exportParam.setSearchParam(searchParam);
-            DbQueryExport DbQueryExport = new DbQueryExport(bufferedWriter, exportParam);
-            DbQueryExport.exportQueryPage(batchLabelMapper::selectPage);
+            CsvQueryExport dbQueryExport = new CsvQueryExport(bufferedWriter, exportParam);
+            dbQueryExport.exportQueryPage(batchLabelMapper::selectPage);
         } catch (IOException e) {
         } finally {
-            sqlSession.close();
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
         }
         System.out.println("time " + (System.currentTimeMillis() -  startTime) + " ms");
     }
