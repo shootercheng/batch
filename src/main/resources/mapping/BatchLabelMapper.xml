@@ -108,6 +108,11 @@
 
     <select id = "countTbSum" resultType="java.lang.Integer">
         select count(1) from ${tableName}
+        <where>
+            <if test="code != null and code !=''">
+                and code &lt; #{code}
+            </if>
+        </where>
     </select>
 
     <select id = "selectPage" resultType="java.lang.String">
@@ -128,6 +133,11 @@
             ifnull(create_time,''),
             ifnull(update_time,'')
         ) from ${tableName}
+        <where>
+            <if test="code != null and code !=''">
+                and code &lt; #{code}
+            </if>
+        </where>
         <if test="startIndex != null and pageSize != null">
             limit #{startIndex},#{pageSize}
         </if>
