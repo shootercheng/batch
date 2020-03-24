@@ -20,9 +20,10 @@
       
 4. run the same jar in linux server (centos7).
 
-5. csv excel export test
-    http://localhost:8888/batch/insert?number=1000000&index=1
-    http://localhost:8888/batch/insert?number=2000000&index=2
+5. csv excel export test.
+
+    1.http://localhost:8888/batch/insert?number=1000000&index=1
+    2.http://localhost:8888/batch/insert?number=2000000&index=2
     CsvExportTest、ExcelExportTest
 
 
