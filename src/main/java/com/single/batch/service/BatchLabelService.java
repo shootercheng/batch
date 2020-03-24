@@ -81,7 +81,7 @@ public class BatchLabelService {
             label.setId(ids[i]);
             label.setType(0);
             label.setStatus(1);
-            label.setCode("" + i);
+            label.setCode(ids[i] + "," + i);
             label.setCustomerId(1L);
             label.setOperatorId(1L);
             label.setResellerId(1L);

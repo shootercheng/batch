@@ -118,20 +118,20 @@
     <select id = "selectPage" resultType="java.lang.String">
         select concat_ws(',',
             id,
-            ifnull(parent,''),
-            ifnull(code,''),
-            ifnull(status,''),
-            ifnull(type,''),
-            ifnull(customer_id,''),
-            ifnull(operator_id,''),
-            ifnull(reseller_id,''),
-            ifnull(user_id,''),
-            ifnull(product_id,''),
-            ifnull(batch,''),
-            ifnull(query_times,''),
-            ifnull(first_time,''),
-            ifnull(create_time,''),
-            ifnull(update_time,'')
+            concat('"',ifnull(parent,''),'"'),
+            concat('"',ifnull(code,''),'"'),
+            concat('"',ifnull(status,''),'"'),
+            concat('"',ifnull(type,''),'"'),
+            concat('"',ifnull(customer_id,''),'"'),
+            concat('"',ifnull(operator_id,''),'"'),
+            concat('"',ifnull(reseller_id,''),'"'),
+            concat('"',ifnull(user_id,''),'"'),
+            concat('"',ifnull(product_id,''),'"'),
+            concat('"',ifnull(batch,''),'"'),
+            concat('"',ifnull(query_times,''),'"'),
+            concat('"',ifnull(first_time,''),'"'),
+            concat('"',ifnull(create_time,''),'"'),
+            concat('"',ifnull(update_time,''),'"')
         ) from ${tableName}
         <where>
             <if test="code != null and code !=''">

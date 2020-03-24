@@ -1,8 +1,7 @@
 package com.scd.test;
 
 import com.github.shootercheng.export.BaseExport;
-import com.github.shootercheng.export.Constants;
-import com.github.shootercheng.export.ExcelQueryExport;
+import com.github.shootercheng.export.ExcelExport;
 import com.github.shootercheng.param.ExportParam;
 import com.single.batch.mapper.BatchLabelMapper;
 import org.apache.ibatis.io.Resources;
@@ -48,7 +47,7 @@ public class ExcelExportTest {
         exportParam.setPageSize(10000);
         exportParam.setSheetName("test2007");
         exportParam.setSearchParam(searchParam);
-        ExcelQueryExport excelExport = new ExcelQueryExport(filePath, null, false, exportParam);
+        ExcelExport excelExport = new ExcelExport(filePath, null, false, exportParam);
         excelExport.exportQueryPage(batchLabelMapper::selectPage);
         excelExport.close();
         System.out.println("time " + (System.currentTimeMillis() -  startTime) + " ms");
@@ -75,9 +74,16 @@ public class ExcelExportTest {
         exportParam.setSheetName("test2007");
         exportParam.setSearchParam(searchParam);
         exportParam.setStartLine(1);
-        ExcelQueryExport excelExport = new ExcelQueryExport(tempPath, filePath, null, true, exportParam);
-        excelExport.exportQueryPage(batchLabelMapper::selectPage);
-        excelExport.close();
+        BaseExport excelExport = null;
+        try {
+            excelExport = new ExcelExport(tempPath, filePath, null, exportParam);
+            excelExport.exportQueryPage(batchLabelMapper::selectPage);
+        } catch (Exception e) {
+        } finally {
+            if (excelExport != null) {
+                excelExport.close();
+            }
+        }
         System.out.println("time " + (System.currentTimeMillis() -  startTime) + " ms");
     }
 
@@ -102,7 +108,7 @@ public class ExcelExportTest {
         exportParam.setSheetName("test2007");
         exportParam.setSearchParam(searchParam);
         exportParam.setStartLine(1);
-        ExcelQueryExport excelExport = new ExcelQueryExport(templatePath, filePath, null, true, exportParam);
+        ExcelExport excelExport = new ExcelExport(templatePath, filePath, null, exportParam);
         excelExport.exportQueryPage(batchLabelMapper::selectPage);
         excelExport.close();
         System.out.println("time " + (System.currentTimeMillis() -  startTime) + " ms");
@@ -127,7 +133,7 @@ public class ExcelExportTest {
         exportParam.setPageSize(10000);
         exportParam.setSheetName("test2003");
         exportParam.setSearchParam(searchParam);
-        ExcelQueryExport excelExport = new ExcelQueryExport(filePath, null, false, exportParam);
+        ExcelExport excelExport = new ExcelExport(filePath, null, false, exportParam);
         excelExport.exportQueryPage(batchLabelMapper::selectPage);
         excelExport.close();
         System.out.println("time " + (System.currentTimeMillis() -  startTime) + " ms");

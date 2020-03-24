@@ -1,7 +1,8 @@
 package com.scd.test;
 
-import com.github.shootercheng.export.Constants;
-import com.github.shootercheng.export.CsvQueryExport;
+import com.github.shootercheng.common.Constants;
+import com.github.shootercheng.export.BaseExport;
+import com.github.shootercheng.export.CsvExport;
 import com.github.shootercheng.param.ExportParam;
 import com.single.batch.mapper.BatchLabelMapper;
 import org.apache.ibatis.io.Resources;
@@ -69,8 +70,8 @@ public class CsvExportTest {
             exportParam.setPageSize(10000);
             exportParam.setRecordSeparator(Constants.CRLF);
             exportParam.setSearchParam(searchParam);
-            CsvQueryExport dbQueryExport = new CsvQueryExport(bufferedWriter, exportParam);
-            dbQueryExport.exportQueryPage(batchLabelMapper::selectPage);
+            BaseExport baseExport = new CsvExport(bufferedWriter, exportParam);
+            baseExport.exportQueryPage(batchLabelMapper::selectPage);
         } catch (IOException e) {
         } finally {
             if (sqlSession != null) {
