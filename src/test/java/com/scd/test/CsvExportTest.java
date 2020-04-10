@@ -80,4 +80,34 @@ public class CsvExportTest {
         }
         System.out.println("time " + (System.currentTimeMillis() -  startTime) + " ms");
     }
+
+    @Test
+    public void testCsvExportPath() {
+        long startTime = System.currentTimeMillis();
+        String exportPath = "file" + File.separator + UUID.randomUUID().toString();
+        File file = new File(exportPath);
+        file.mkdirs();
+        String filePath = exportPath + File.separator + "test.csv";
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        BatchLabelMapper batchLabelMapper = sqlSession.getMapper(BatchLabelMapper.class);
+        try {
+            ExportParam exportParam = new ExportParam();
+            Map<String, Object> searchParam = new HashMap<>(16);
+            searchParam.put("tableName", "label_2");
+            exportParam.setHeader("id, parent, code, status, type, customer_id, operator_id, reseller_id, user_id, product_id, batch, query_times," +
+                    "first_time, create_time, update_time");
+            exportParam.setSum(batchLabelMapper.countTbSum(searchParam));
+            exportParam.setPageSize(10000);
+            exportParam.setRecordSeparator(Constants.CRLF);
+            exportParam.setSearchParam(searchParam);
+            BaseExport baseExport = new CsvExport(filePath, exportParam);
+            baseExport.exportQueryPage(batchLabelMapper::selectPage);
+        } catch (Exception e) {
+        } finally {
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+        System.out.println("time " + (System.currentTimeMillis() -  startTime) + " ms");
+    }
 }
