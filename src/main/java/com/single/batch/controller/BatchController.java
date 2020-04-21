@@ -1,6 +1,6 @@
 package com.single.batch.controller;
 
-import com.github.shootercheng.common.Constants;
+import com.github.shootercheng.export.common.Constants;
 import com.single.batch.mapper.BatchLabelMapper;
 import com.single.batch.proxy.LoggerInvocationHandler;
 import com.single.batch.proxy.ProxyFactory;
