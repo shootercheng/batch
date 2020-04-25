@@ -142,4 +142,22 @@
             limit #{startIndex},#{pageSize}
         </if>
     </select>
+
+    <select id = "selectExcelPage" resultType="java.lang.String">
+        select concat_ws(',',
+            id,
+            concat('"',ifnull(parent,''),'"'),
+            concat('"',ifnull(code,''),'"'),
+            concat('"',ifnull(status,''),'"'),
+            concat('"',ifnull(type,''),'"')
+        ) from ${tableName}
+        <where>
+            <if test="code != null and code !=''">
+                and code &lt; #{code}
+            </if>
+        </where>
+        <if test="startIndex != null and pageSize != null">
+            limit #{startIndex},#{pageSize}
+        </if>
+    </select>
 </mapper>

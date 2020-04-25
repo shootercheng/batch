@@ -2,6 +2,7 @@ package com.scd.test;
 
 import com.github.shootercheng.export.core.BaseExport;
 import com.github.shootercheng.export.core.ExcelExport;
+import com.github.shootercheng.export.core.ExcelMultiSheetExport;
 import com.github.shootercheng.export.param.ExportParam;
 import com.single.batch.mapper.BatchLabelMapper;
 import org.apache.ibatis.io.Resources;
@@ -10,6 +11,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.BeanUtils;
 
 import java.io.*;
 import java.util.HashMap;
@@ -29,13 +31,17 @@ public class ExcelExportTest {
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
     }
 
-    @Test
-    public void testExcel2007Export() {
-        long startTime = System.currentTimeMillis();
+    private String getMkdirPath() {
         String exportPath = "file" + File.separator + UUID.randomUUID().toString();
         File file = new File(exportPath);
         file.mkdirs();
-        String filePath = exportPath + File.separator + "test.xlsx";
+        return exportPath;
+    }
+
+    @Test
+    public void testExcel2007Export() {
+        long startTime = System.currentTimeMillis();
+        String filePath = getMkdirPath() + File.separator + "test.xlsx";
         SqlSession sqlSession = sqlSessionFactory.openSession();
         BatchLabelMapper batchLabelMapper = sqlSession.getMapper(BatchLabelMapper.class);
         ExportParam exportParam = new ExportParam();
@@ -92,9 +98,7 @@ public class ExcelExportTest {
         long startTime = System.currentTimeMillis();
         String exportPath = "file/template";
         String templatePath = exportPath + File.separator + "template.xlsx";
-        String dirPath = exportPath + File.separator + UUID.randomUUID().toString();
-        new File(dirPath).mkdirs();
-        String filePath = dirPath + File.separator + "test.xlsx";
+        String filePath = getMkdirPath() + File.separator + "test.xlsx";
         SqlSession sqlSession = sqlSessionFactory.openSession();
         BatchLabelMapper batchLabelMapper = sqlSession.getMapper(BatchLabelMapper.class);
         ExportParam exportParam = new ExportParam();
@@ -117,10 +121,7 @@ public class ExcelExportTest {
     @Test
     public void testExcel2003Export() {
         long startTime = System.currentTimeMillis();
-        String exportPath = "file" + File.separator + UUID.randomUUID().toString();
-        File file = new File(exportPath);
-        file.mkdirs();
-        String filePath = exportPath + File.separator + "test.xls";
+        String filePath = getMkdirPath() + File.separator + "test.xls";
         SqlSession sqlSession = sqlSessionFactory.openSession();
         BatchLabelMapper batchLabelMapper = sqlSession.getMapper(BatchLabelMapper.class);
         ExportParam exportParam = new ExportParam();
@@ -137,5 +138,41 @@ public class ExcelExportTest {
         excelExport.exportQueryPage(batchLabelMapper::selectPage);
         excelExport.close();
         System.out.println("time " + (System.currentTimeMillis() -  startTime) + " ms");
+    }
+
+    @Test
+    public void testMultiExcel() {
+        long startTime = System.currentTimeMillis();
+        String filePath = getMkdirPath() + File.separator + "test.xlsx";
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        BatchLabelMapper batchLabelMapper = sqlSession.getMapper(BatchLabelMapper.class);
+        Map<Integer, ExportParam> exportParamMap = createExportParamMap(batchLabelMapper);
+        ExcelMultiSheetExport excelExport = new ExcelMultiSheetExport(filePath, null, false, exportParamMap);
+        excelExport.exportQueryPageByParamIndex(batchLabelMapper::selectExcelPage, 0);
+        excelExport.exportQueryPageByParamIndex(batchLabelMapper::selectExcelPage, 1, true);
+        excelExport.close();
+        System.out.println("time " + (System.currentTimeMillis() -  startTime) + " ms");
+    }
+
+    private Map<Integer, ExportParam> createExportParamMap(BatchLabelMapper batchLabelMapper) {
+        Map<Integer, ExportParam> exportParamMap = new HashMap<>(16);
+        ExportParam exportParam0 = new ExportParam();
+        Map<String, Object> searchParam = new HashMap<>(16);
+        searchParam.put("tableName", "label_1");
+        exportParam0.setHeader("id, parent, code, status");
+        exportParam0.setSum(batchLabelMapper.countTbSum(searchParam));
+        exportParam0.setPageSize(10000);
+        exportParam0.setSheetName("sheet_label_1");
+        exportParam0.setSearchParam(searchParam);
+        exportParamMap.put(0, exportParam0);
+        ExportParam exportParam1 = new ExportParam();
+        BeanUtils.copyProperties(exportParam0, exportParam1);
+        searchParam.clear();
+        searchParam.put("tableName", "label_2");
+        exportParam1.setSum(batchLabelMapper.countTbSum(searchParam));
+        exportParam1.setSearchParam(searchParam);
+        exportParam1.setSheetName("sheet_label_2");
+        exportParamMap.put(1, exportParam1);
+        return exportParamMap;
     }
 }

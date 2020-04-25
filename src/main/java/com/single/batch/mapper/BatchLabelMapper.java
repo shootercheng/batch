@@ -32,4 +32,6 @@ public interface BatchLabelMapper {
     List<String> selectPage(Map<String, Object> map);
 
     int countTbSum(Map<String, Object> map);
+
+    List<String> selectExcelPage(Map<String, Object> map);
 }
